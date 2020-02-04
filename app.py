@@ -1,6 +1,6 @@
 """Flask app for Cupcakes"""
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from models import db, connect_db, Cupcake, default_image
 from flask_debugtoolbar import DebugToolbarExtension
 from serializers import cupcake_serializer
@@ -66,10 +66,14 @@ def update_cupcake(cupcake_id):
 
     updated_cupcake = Cupcake.query.get_or_404(cupcake_id)
 
-    updated_cupcake.flavor = request.json.get('flavor'),
-    updated_cupcake.size = request.json.get('size'),
-    updated_cupcake.rating = request.json.get('rating'),
-    updated_cupcake.image = request.json.get('image') or default_image
+    if request.json.get('flavor'):
+        updated_cupcake.flavor = request.json.get('flavor')
+    if request.json.get('size'):
+        updated_cupcake.size = request.json.get('size')
+    if request.json.get('rating'):
+        updated_cupcake.rating = request.json.get('rating')
+    if request.json.get('rating'):
+        updated_cupcake.image = request.json.get('image') or default_image
 
     db.session.commit()
 
@@ -90,3 +94,12 @@ def delete_cupcake(cupcake_id):
     message = "Deleted"
 
     return jsonify(message=message)
+
+
+@app.route('/')
+def show_homepage():
+    """ Show cupcake list and cupcake form. """
+
+    return render_template('index.html')
+
+
